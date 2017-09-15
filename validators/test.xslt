@@ -61,14 +61,9 @@
     <warning>
       <level>error</level>
       <jira_number>SOLR-6797</jira_number>
-      <description>'units' attribute for spatial field type (name = <xsl:value-of select="attribute::name"/> and class = <xsl:value-of select
-="attribute::class"/>) is deprecated</description>
+      <description>'units' attribute for spatial field type is deprecated</description>
       <recommendation>
-        Spatial fields originating from Solr 4 (e.g. SpatialRecursivePrefixTreeFieldType, BBoxField)
-        have the 'units' attribute deprecated, now replaced with 'distanceUnits'.  If you change it to
-        a unit other than 'degrees' (or if you don't specify it, which will default to kilometers if
-        geo=true), then be sure to update maxDistErr as it's in those units.  If you keep units=degrees
-        then it should be backwards compatible but you'll get a deprecation warning on startup.
+        ...
       </recommendation>
       <reindexing>Required</reindexing>
       <transform>no</transform>
@@ -83,9 +78,9 @@
     <incompatibility>
       <level>info</level>
       <jira_number>LUCENE-6058</jira_number>
-      <description>Users of the BeiderMorseFilterFactory will need to rebuild their indexes after upgrading</description>
+      <description>Users of BeiderMorseFilterFactory will need to rebuild their indexes</description>
       <recommendation>
-        Due to changes in the underlying commons-codec package, users of the BeiderMorseFilterFactory will need to rebuild their indexes after upgrading.
+        ...
       </recommendation>
       <reindexing>Required</reindexing>
       <transform>no</transform>
