@@ -74,7 +74,8 @@
 </xsl:template>
 
 <xsl:template match="filter">
-  <xsl:if test="@class='solr.BeiderMorseFilterFactory' and //field/@type=../../@name">
+  <xsl:if test="@class='solr.BeiderMorseFilterFactory'
+                and //field/@type=../../@name">
     <incompatibility>
       <level>info</level>
       <jira_number>LUCENE-6058</jira_number>
