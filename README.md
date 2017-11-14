@@ -9,9 +9,9 @@ Solr config upgrade tool aims to simplify the upgrade process by providing upgra
 - Are there any changes in Lucene/Solr which would require me to do a full reindexing OR can I get away with an index upgrade?
 
  ## High level design
- 
+
 This tool is built using [Extensible Stylesheet Language Transformations](https://en.wikipedia.org/wiki/XSLT) engine. The upgrade rules, implemented in the form of XSLT transformations, can identify backwards incompatibilities and in some cases can even fix them automatically.
- 
+
  In general, an incompatibility can be categorized as follows,
  - An incompatibility due to removal of Lucene/Solr configuration element (e.g. a field type) is marked as ERROR in the validation result. Typically this will result in failure to start the Solr server (or load the core). User must make changes to Solr configuration using application specific knowledge to fix such incompatibility.
  - An incompatibility due to deprecation of a configuration section in the new Solr version is marked as WARNING in the validation result. Typically this will not result in any failure during Solr server startup (or core loading), but may prevent application from utilizing new Lucene/Solr features (or bug-fixes). User may choose to make changes to Solr configuration using application specific knowledge to fix such incompatibility.
@@ -48,7 +48,7 @@ e.g. following command runs the upgrade tool on a Solr schema.xml of version 4.x
 Validating schema...
 
 Following configuration errors found:
-      
+
       * Legacy field type (name = pint and class = solr.IntField) is removed.
       * Legacy field type (name = plong and class = solr.LongField) is removed.
       * Legacy field type (name = pfloat and class = solr.FloatField) is removed.
@@ -61,9 +61,9 @@ No configuration warnings found...
 Please note that in Solr 5:
     * Users of the BeiderMorseFilterFactory will need to rebuild their indexes after upgrading
 
-Solr schema validation failed. Please review /tmp/schema_validation.xml for more details. 
+Solr schema validation failed. Please review /tmp/schema_validation.xml for more details.
 ```
- 
+
 ## TODO
 - Add logic to handle the Solr config set (which includes overlay configurations) as well as solr.xml
 - Add upgrade rules to identify plugin deprecations (and removals)
