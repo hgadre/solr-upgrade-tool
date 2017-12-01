@@ -108,6 +108,13 @@ public class ConfigUpgradeTool {
       result = validator.get().validate(getConfigSource(params), handler);
     }
 
+    if (result && !params.isDryRun()) {
+      Optional<ConfigTransformer> transformer = getConfigTransformer(params);
+      if (transformer.isPresent()) {
+        transformer.get().transform(getConfigSource(params));
+      }
+    }
+
     return result ? 0 : 1;
   }
 
@@ -138,6 +145,28 @@ public class ConfigUpgradeTool {
         Optional<ProcessorConfig> procConf = conf.getProcessorByConfigType(confType);
         if (procConf.isPresent()) {
           return Optional.of(new ConfigValidator(params, confType.getConfigType(), procConf.get()));
+        }
+        break;
+      }
+
+      case CONFIGSET: {
+        throw new UnsupportedOperationException();
+      }
+    }
+
+    return Optional.empty();
+  }
+
+  private Optional<ConfigTransformer> getConfigTransformer(ToolParams params) {
+    ConfigType confType = params.getConfType();
+    UpgradeProcessorsConfig conf = params.getUpgradeProcessorConf();
+
+    switch (confType) {
+      case SCHEMA_XML:
+      case SOLRCONFIG_XML: {
+        Optional<ProcessorConfig> procConf = conf.getProcessorByConfigType(confType);
+        if (procConf.isPresent()) {
+          return Optional.of(new ConfigTransformer(params, procConf.get()));
         }
         break;
       }
