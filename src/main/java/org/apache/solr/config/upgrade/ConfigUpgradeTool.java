@@ -106,13 +106,18 @@ public class ConfigUpgradeTool {
     Optional<ConfigValidator> validator = getConfigValidator(params);
     if (validator.isPresent()) {
       result = validator.get().validate(getConfigSource(params), handler);
-    }
-
-    if (result && !params.isDryRun()) {
-      Optional<ConfigTransformer> transformer = getConfigTransformer(params);
-      if (transformer.isPresent()) {
-        transformer.get().transform(getConfigSource(params));
+      // Note we expect the transformation rules to be present in the validation script
+      // at an info level. When validation script is not present, there is no need for
+      // transformation as well.
+      if (result && !params.isDryRun()) {
+        Optional<ConfigTransformer> transformer = getConfigTransformer(params);
+        if (transformer.isPresent()) {
+          transformer.get().transform(getConfigSource(params));
+        }
       }
+    } else {
+      System.out.println("No validation rules found for config type : " + params.getConfType()
+      + " in processor configuration " + params.getProcessorConfPath() );
     }
 
     return result ? 0 : 1;
@@ -143,7 +148,7 @@ public class ConfigUpgradeTool {
       case SCHEMA_XML:
       case SOLRCONFIG_XML: {
         Optional<ProcessorConfig> procConf = conf.getProcessorByConfigType(confType);
-        if (procConf.isPresent()) {
+        if (procConf.isPresent() && (procConf.get().getValidatorPath() != null)) {
           return Optional.of(new ConfigValidator(params, confType.getConfigType(), procConf.get()));
         }
         break;

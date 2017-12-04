@@ -35,7 +35,11 @@ public class ConfigTransformer {
   private final Path resultFile;
 
   public ConfigTransformer(ToolParams params, ProcessorConfig procConfig) {
-    this.transformer = buildTransformer(params, procConfig);
+    try {
+      this.transformer = buildTransformer(params, procConfig);
+    } catch (TransformerConfigurationException e) {
+      throw new UpgradeConfigException (e);
+    }
 
     String confFileName = params.getSolrConfPath().getFileName().toString();
     this.resultFile = params.getResultDirPath().resolve(confFileName);
@@ -48,22 +52,24 @@ public class ConfigTransformer {
     System.out.println("The upgraded configuration file is available at " + resultFile);
   }
 
-  protected Transformer buildTransformer(ToolParams params, ProcessorConfig procConfig) {
-    Path scriptPath = Paths.get(procConfig.getTransformerPath());
-    if (!scriptPath.isAbsolute()) {
-      scriptPath = params.getProcessorConfPath().getParent().resolve(scriptPath);
+  protected Transformer buildTransformer(ToolParams params, ProcessorConfig procConfig)
+      throws TransformerConfigurationException {
+    Transformer result = params.getFactory().newTransformer(); // identity transform.
+
+    if (procConfig.getTransformerPath() != null) {
+      Path scriptPath = Paths.get(procConfig.getTransformerPath());
+      if (!scriptPath.isAbsolute()) {
+        scriptPath = params.getProcessorConfPath().getParent().resolve(scriptPath);
+      }
+      if (!Files.exists(scriptPath)) {
+        throw new IllegalArgumentException("Unable to find transformation script "+scriptPath);
+      }
+      result = params.getFactory().newTransformer(new StreamSource(scriptPath.toFile()));
     }
-    if (!Files.exists(scriptPath)) {
-      throw new IllegalArgumentException("Unable to find transformation script "+scriptPath);
-    }
-    try {
-      Transformer result = params.getFactory().newTransformer(new StreamSource(scriptPath.toFile()));
-      result.setOutputProperty(OutputKeys.INDENT, "yes");
-      result.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-      return result ;
-    } catch (TransformerConfigurationException e) {
-      throw new UpgradeConfigException(e);
-    }
+
+    result.setOutputProperty(OutputKeys.INDENT, "yes");
+    result.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+    return result;
   }
 
 }
