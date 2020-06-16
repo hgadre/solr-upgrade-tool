@@ -19,10 +19,24 @@ This tool is built using [Extensible Stylesheet Language Transformations](https:
 
 ## Steps to run this tool
 
+
+### Option 1
 - Build this project using maven (mvn clean install)
 - Run the config upgrade tool as follows
 ```bash
 ./bin/config_upgrade.sh --help
+```
+
+### Option 2
+- Build this project using Gradle (./gradlew shadowJar)
+- run the config upgrade tool as follows
+```bash
+java -jar build/libs/solr-upgrade-tool-0.0.1-SNAPSHOT-all.jar --help
+```
+
+regarless the option this is the help output:
+
+```bash
 usage: ConfigUpgradeTool
  -t <arg>       This parameter specifies the type of Solr configuration to
                 be validated and transformed.The tool currently supports
