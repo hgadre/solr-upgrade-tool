@@ -32,7 +32,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.solr.config.upgrade.UpgradeProcessorsConfig.ProcessorConfig;
 import org.apache.solr.config.upgrade.impl.DefaultValidationResultProcessor;
 
@@ -54,7 +54,7 @@ public class ConfigUpgradeTool {
       SOLR_CONF_PATH, UPGRADE_PROCESSORS_CONF_FILE, RESULT_DIR_PATH, VERBOSE_OUTPUT);
 
   public static void main(String[] args) {
-    CommandLineParser parser = new PosixParser();
+    CommandLineParser parser = new DefaultParser();
     Options options = new Options();
 
     options.addOption(null, DRY_RUN, false, "This command will perform compatibility checks for the specified Solr config file.");
